@@ -1,4 +1,5 @@
 from layers.layer import Layer
+import numpy as np
 
 class Network:
     def __init__(self, *network: tuple[Layer] | tuple[list[Layer]] | None):
@@ -36,7 +37,7 @@ class Network:
         return output
 
     def train(self, loss_func, d_loss_func, x_data, y_data, epochs=1000, learning_rate=0.1, verbose=True, every=1):
-        for epoch in range(epochs):
+        for epoch in range(1, epochs+1):
             error = 0
             for x, y in zip(x_data, y_data):
                 # forward
@@ -52,4 +53,8 @@ class Network:
 
             error /= len(x_data)
             if verbose and epoch % every == 0:
-                print(f"{epoch + 1}/{epochs}, {error=}")
+                accuracy = self.accuracy(x_data, y_data)
+                print(f"{epoch}/{epochs}, error={round(error, 10)}, accuracy={round(accuracy, 5)}")
+    
+    def accuracy(self, x_data, y_data):
+        return np.sum(np.argmax(self.predict(x_datum)) == np.argmax(y_datum) for x_datum, y_datum in zip(x_data, y_data)) / len(y_data)
