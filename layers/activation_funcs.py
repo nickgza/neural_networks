@@ -23,7 +23,7 @@ class Swish(ActivationLayer):
 class ReLU(ActivationLayer):
     def __init__(self):
         relu = lambda A: np.fmax(A, 0)
-        d_relu = lambda A: np.heaviside(A, 1)
+        d_relu = lambda A: A >= 0
         super().__init__(relu, d_relu)
 
 class LReLU(ActivationLayer):

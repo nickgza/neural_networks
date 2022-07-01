@@ -28,7 +28,7 @@ def preprocess_data(x: np.ndarray, y: np.ndarray, limit: int | None = None):
 
 (x_train, y_train), (x_test, y_test) = mnist.load_data()
 x_train, y_train = preprocess_data(x_train, y_train, 100)
-x_test, y_test = preprocess_data(x_test, y_test, 100)
+x_test, y_test = preprocess_data(x_test, y_test, 30)
 
 network = Network([
     ConvLayer((1, 28, 28), 3, 5),
