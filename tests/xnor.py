@@ -1,7 +1,7 @@
 import sys
 sys.path.append('..')
 import numpy as np
-from layers.fc_layer import *
+from layers.layers import *
 from layers.activation_funcs import *
 import loss_funcs
 from network import Network

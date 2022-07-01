@@ -35,7 +35,7 @@ class Network:
             output = layer.forward_propagate(output)
         return output
 
-    def train(self, loss_func, d_loss_func, x_data, y_data, epochs=1000, learning_rate=0.1, verbose=True):
+    def train(self, loss_func, d_loss_func, x_data, y_data, epochs=1000, learning_rate=0.1, verbose=True, every=1):
         for epoch in range(epochs):
             error = 0
             for x, y in zip(x_data, y_data):
@@ -51,5 +51,5 @@ class Network:
                     grad = layer.backward_propagate(grad, learning_rate)
 
             error /= len(x_data)
-            if verbose:
+            if verbose and epoch % every == 0:
                 print(f"{epoch + 1}/{epochs}, {error=}")

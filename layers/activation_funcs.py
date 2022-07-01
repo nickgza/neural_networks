@@ -26,6 +26,12 @@ class ReLU(ActivationLayer):
         d_relu = lambda A: np.heaviside(A, 1)
         super().__init__(relu, d_relu)
 
+class LReLU(ActivationLayer):
+    def __init__(self):
+        lrelu = lambda A: (h := np.heaviside(A, 1)) * A + (1 - h) * 0.01 * A
+        d_lrelu = lambda A: (h := np.heaviside(A, 1)) + (1 - h) * 0.01
+        super().__init__(lrelu, d_lrelu)
+
 class ELU(ActivationLayer):
     def __init__(self):
         elu = lambda A: (h := np.heaviside(A, 1)) * A + (1 - h) * (np.exp(A) - 1)
