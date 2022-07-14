@@ -6,7 +6,7 @@ from layers.activation_funcs import *
 from loss_funcs import *
 from network import Network
 
-from keras.datasets import mnist
+# from keras.datasets import mnist
 from keras.utils import np_utils
 
 def preprocess_data(x: np.ndarray, y: np.ndarray, limit: int | None = None):
@@ -26,7 +26,13 @@ def preprocess_data(x: np.ndarray, y: np.ndarray, limit: int | None = None):
 
     return x, y
 
-(x_train, y_train), (x_test, y_test) = mnist.load_data()
+with np.load('mnist.npz') as data:
+    x_train = data['x_train']
+    y_train = data['y_train']
+    x_test = data['x_test']
+    y_test = data['y_test']
+
+# (x_train, y_train), (x_test, y_test) = mnist.load_data()
 x_train, y_train = preprocess_data(x_train, y_train, 100)
 x_test, y_test = preprocess_data(x_test, y_test, 30)
 
@@ -40,10 +46,10 @@ network = Network([
     Softmax(),
 ])
 
-# train
+# Train
 network.train(binary_cross_entropy, d_binary_cross_entropy, x_train, y_train, epochs=20, learning_rate=0.05)
 
-# test
-for x, y in zip(x_test, y_test):
+# Test
+for ind, (x, y) in enumerate(zip(x_test, y_test)):
     output = network.predict(x)
-    print(f'pred: {np.argmax(output)},  true: {np.argmax(y)},  {"T" if np.argmax(output) == np.argmax(y) else "F"}')
+    print(f'{ind}  pred: {np.argmax(output)},  true: {np.argmax(y)},  {"T" if np.argmax(output) == np.argmax(y) else "F"}  confidence: {round(output[np.argmax(output)][0] * 100, 3)}%')

@@ -7,7 +7,7 @@ from loss_funcs import *
 from network import Network
 
 # from keras.datasets import mnist
-from keras.utils import np_utils, get_file
+from keras.utils import np_utils
 import pygame as pg
 
 def preprocess_data(x: np.ndarray, y: np.ndarray, limit: int | None = None):
@@ -36,15 +36,18 @@ network = Network([
     Softmax(),
 ])
 
-# train
-network.train(mean_squared, d_mean_squared, x_train, y_train, epochs=500, learning_rate=0.05, every=50)
+# Train
+# network.train(mean_squared, d_mean_squared, x_train, y_train, epochs=500, learning_rate=0.05, every=50)
 
-# # test
+# # Test
 # for ind, (x, y) in enumerate(zip(x_test, y_test)):
 #     output = network.predict(x)
-#     print(f'{ind}  pred: {np.argmax(output)},  true: {np.argmax(y)},  {"T" if np.argmax(output) == np.argmax(y) else "F"}  {output[np.argmax(output)]}')
+#     print(f'{ind}  pred: {np.argmax(output)},  true: {np.argmax(y)},  {"T" if np.argmax(output) == np.argmax(y) else "F"}  confidence: {round(output[np.argmax(output)][0] * 100, 3)}%')
 
-# display
+
+
+
+# Display
 def calculate_top_left(width, height):
     if width > height:
         return ((width - height) // 2, 0)
@@ -71,7 +74,7 @@ def get_square(x: int, y: int) -> tuple[int, int]:
     square_dim = round(dim / 28)
     top_left_x, top_left_y = calculate_top_left(*size)
 
-    return ((y - top_left_y) // square_dim, (x - top_left_x) // square_dim)
+    return ((y - top_left_y) / square_dim, (x - top_left_x) / square_dim)
 
 def show_digit(data: int | np.ndarray = 0, mode='index'):
     ''' mode = 'index' | 'data' '''
@@ -115,8 +118,6 @@ def draw_digit(draw_radius: int = 1) -> np.ndarray:
     clock = pg.time.Clock()
     mouse_down = False
 
-    drawn = set()
-
     while RUN:
         clock.tick()
         for event in pg.event.get():
@@ -138,10 +139,10 @@ def draw_digit(draw_radius: int = 1) -> np.ndarray:
             if not (0 <= mouse_pos[0] <= 27 and 0 <= mouse_pos[1] <= 27):
                 continue
             
-            for y in range(mouse_pos[0] - draw_radius, mouse_pos[0] + draw_radius + 1):
+            for y in range(int(mouse_pos[0]) - draw_radius, int(mouse_pos[0]) + draw_radius + 2):
                 if not 0 <= y <= 27:
                     continue
-                for x in range(mouse_pos[1] - draw_radius, mouse_pos[1] + draw_radius + 1):
+                for x in range(int(mouse_pos[1]) - draw_radius, int(mouse_pos[1]) + draw_radius + 2):
                     if not 0 <= x <= 27:
                         continue
                     dist = np.linalg.norm(((mouse_pos[0] - y), (mouse_pos[1] - x))) / np.linalg.norm((draw_radius, draw_radius))
@@ -158,7 +159,7 @@ def draw_digit(draw_radius: int = 1) -> np.ndarray:
 def predict():
     data = draw_digit()
     output = network.predict(data)
-    print(f'predicted: {np.argmax(output)}  confidence: {round(output[np.argmax(output)][0], 5) * 100}%')
+    print(f'predicted: {np.argmax(output)}  confidence: {round(output[np.argmax(output)][0] * 100, 3)}%')
 
 show = show_digit
 draw = draw_digit
